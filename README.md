@@ -1,42 +1,50 @@
-# Agentic AI App Hackathon Template
+# Agentic AI Assistant
 
-Welcome! This repository is your starting point for the **Agentic AI App Hackathon**. It includes:
+تطبيق وكيل ذكاء اصطناعي عملي وخفيف، مبني على Python وGemini اختياريًا. يعمل في وضعين:
 
-- A consistent folder structure  
-- An environment spec (`environment.yml` or `Dockerfile`)  
-- Documentation placeholders to explain your design and demo
+- **وضع محلي دون مفتاح API:** ينفذ الحساب والوقت والتلخيص الاحتياطي ويحفظ ذاكرة المحادثة.
+- **وضع Gemini:** يستخدم Gemini للتخطيط وصياغة الإجابة النهائية، مع قصر تنفيذ الأدوات على سجل أدوات آمن.
 
-## 📋 Submission Checklist
+## التشغيل السريع
 
-- [ ] All code in `src/` runs without errors  
-- [ ] `ARCHITECTURE.md` contains a clear diagram sketch and explanation  
-- [ ] `EXPLANATION.md` covers planning, tool use, memory, and limitations  
-- [ ] `DEMO.md` links to a 3–5 min video with timestamped highlights  
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+python -m src.main "احسب 25 * 4"
+python -m src.main
+```
 
+لتمكين Gemini، ضع `GOOGLE_API_KEY` في `.env`. لا تضع المفتاح داخل Git.
 
-## 🚀 Getting Started
+## واجهة الويب الاختيارية
 
-1. **Clone / Fork** this template.  Very Important. Fork Name MUST be the same name as the teamn name
+```bash
+streamlit run src/app.py
+```
 
+## الأدوات الحالية
 
-## 📂 Folder Layout
+- `calculate`: حساب آمن باستخدام AST، دون `eval`.
+- `current_time`: إرجاع الوقت الحالي بصيغة ISO.
+- `summarize_text`: تلخيص احتياطي محلي.
 
-![Folder Layout Diagram](images/folder-githb.png)
+يمكن إضافة أدوات جديدة إلى `src/tools/builtin.py` ثم إدراجها في سجل الأدوات وقواعد التحقق في المخطط.
 
+## الاختبارات
 
+```bash
+pytest -q
+python -m compileall -q src
+```
 
-## 🏅 Judging Criteria
+## التصميم
 
-- **Technical Excellence **  
-  This criterion evaluates the robustness, functionality, and overall quality of the technical implementation. Judges will assess the code's efficiency, the absence of critical bugs, and the successful execution of the project's core features.
+1. `planner.py` يحول الطلب إلى خطوات JSON مقيدة.
+2. `executor.py` ينفذ الأدوات المسجلة فقط.
+3. `memory.py` يحفظ آخر الرسائل في JSON محلي.
+4. `agent.py` ينسق التخطيط والتنفيذ والإجابة.
+5. `tools/gemini_tool.py` يعزل تكامل Gemini ويقدم خطأ واضحًا عند غياب المفتاح.
 
-- **Solution Architecture & Documentation **  
-  This focuses on the clarity, maintainability, and thoughtful design of the project's architecture. This includes assessing the organization and readability of the codebase, as well as the comprehensiveness and conciseness of documentation (e.g., GitHub README, inline comments) that enables others to understand and potentially reproduce or extend the solution.
-
-- **Innovative Gemini Integration **  
-  This criterion specifically assesses how effectively and creatively the Google Gemini API has been incorporated into the solution. Judges will look for novel applications, efficient use of Gemini's capabilities, and the impact it has on the project's functionality or user experience. You are welcome to use additional Google products.
-
-- **Societal Impact & Novelty **  
-  This evaluates the project's potential to address a meaningful problem, contribute positively to society, or offer a genuinely innovative and unique solution. Judges will consider the originality of the idea, its potential real‑world applicability, and its ability to solve a challenge in a new or impactful way.
-
-
+هذا التطبيق ليس بديلًا عن خبير قانوني أو طبي أو مالي، ولا ينفذ أوامر نظام أو شيفرة يرسلها المستخدم.

@@ -1,35 +1,38 @@
-# Technical Explanation
+# الشرح التقني
 
-## 1. Agent Workflow
+## دورة الطلب
 
-Describe step-by-step how your agent processes an input:
-1. Receive user input  
-2. (Optional) Retrieve relevant memory  
-3. Plan sub-tasks (e.g., using ReAct / BabyAGI pattern)  
-4. Call tools or APIs as needed  
-5. Summarize and return final output  
+1. يستقبل CLI أو Streamlit طلب المستخدم.
+2. يسجل `Agent` الطلب في الذاكرة المحلية.
+3. ينشئ `Planner` خطة قصيرة من خطوات JSON.
+4. يتحقق المخطط من نوع الخطوة واسم الأداة قبل التنفيذ.
+5. ينفذ `Executor` الأدوات المسجلة ويجمع النتائج.
+6. إذا كان Gemini متاحًا، يصوغ إجابة عربية باستخدام السؤال ونتائج الأدوات والذاكرة الحديثة.
+7. إذا لم يكن Gemini متاحًا، يعيد الوكيل نتيجة الأدوات المحلية مباشرة.
+8. يحفظ الإجابة في الذاكرة.
 
-## 2. Key Modules
+## الأدوات
 
-- **Planner** (`planner.py`): …  
-- **Executor** (`executor.py`): …  
-- **Memory Store** (`memory.py`): …  
+- `calculate`: محلل AST محدود للعمليات الرقمية؛ لا يستخدم `eval`.
+- `current_time`: وقت UTC بصيغة ISO.
+- `summarize_text`: تلخيص محلي احتياطي للنصوص القصيرة.
 
-## 3. Tool Integration
+## لماذا يوجد fallback؟
 
-List each external tool or API and how you call it:
-- **Search API**: function `search(query)`  
-- **Calculator**: LLM function calling  
+التطبيق قابل للتجربة والاختبار دون API key، ويظل مفيدًا في المهام الحسابية والعمليات المحدودة. وجود Gemini يحسن فهم اللغة الحرة وصياغة الإجابة لكنه ليس شرطًا لتشغيل النواة.
 
-## 4. Observability & Testing
+## الاختبارات
 
-Explain your logging and how judges can trace decisions:
-- Logs saved in `logs/` directory  
-- `TEST.sh` exercises main path  
+```bash
+python -m pytest -q
+python -m compileall -q src tests
+```
 
-## 5. Known Limitations
+الاختبارات تغطي الحساب الآمن، رفض الشيفرة، استمرار الذاكرة، التخطيط المحلي، تنفيذ الأدوات، وتشغيل الوكيل دون مفتاح API.
 
-Be honest about edge cases or performance bottlenecks:
-- Long-running API calls  
-- Handling of ambiguous user inputs  
+## القيود
 
+- لا توجد حاليًا أداة بحث ويب أو اتصال بخدمات المستخدم.
+- الذاكرة ملف JSON محلي وليست قاعدة بيانات متعددة المستخدمين.
+- لا ينبغي استخدام إجابات الوكيل بدلًا من استشارة مختص في المجالات القانونية أو الطبية أو المالية.
+- النموذج قد يفشل أو يعيد JSON غير صالح؛ عندها ينتقل التطبيق إلى خطة محلية بسيطة.

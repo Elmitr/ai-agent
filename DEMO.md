@@ -1,23 +1,25 @@
-# Demo Video
+# دليل العرض التجريبي
 
-Please record a 3–5 minute walkthrough showing:
+## تشغيل سريع
 
-- The problem you solve  
-- End-to-end agent behavior on a representative example  
-- Highlighted “agentic” steps (planning, tool calls, memory use)
+```bash
+cp .env.example .env
+python -m src.main "احسب 12 * 8"
+python -m src.main
+```
 
----
+ويمكن تشغيل الواجهة المرئية:
 
-📺 **Provide a Hosted Public Video Link (YouTube unlisted / Loom / MP4):**  MUST BE ON A HOS
-https://your.video.link.here
+```bash
+streamlit run src/app.py
+```
 
-PLEASE DO NOT UPLOAD RAW VIDOE FILES. These submissions will not be reviewed.
+## سيناريو مقترح لمدة 3 دقائق
 
-### Timestamps
+- **00:00–00:30:** عرض المشكلة: تحويل قالب Agentic AI إلى مساعد يعمل حتى دون API.
+- **00:30–01:15:** إرسال `احسب 12 * 8` وإظهار التخطيط المحلي واستدعاء أداة الحساب.
+- **01:15–02:00:** عرض الذاكرة المحلية وتشغيل طلب الوقت أو التلخيص.
+- **02:00–02:40:** إضافة `GOOGLE_API_KEY` وتشغيل التخطيط وصياغة الإجابة عبر Gemini.
+- **02:40–03:00:** عرض الاختبارات وحدود الأمان: لا `eval`، ولا shell، ولا أسرار داخل Git.
 
-- **00:00–00:30** — Introduction & setup  
-- **00:30–01:30** — User input → Planning step  
-- **01:30–02:30** — Tool calls & memory retrieval  
-- **02:30–03:30** — Final output & edge-case handling
-
-- Vidoes longer than 5 minutes may not be reviewd. 
+لا يوجد رابط فيديو مرفق حاليًا؛ أضف رابطًا عامًا بعد تسجيل العرض إذا كان مطلوبًا للتقديم.

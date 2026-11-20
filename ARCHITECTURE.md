@@ -1,24 +1,30 @@
-## 2. `ARCHITECTURE.md`
+# بنية Agentic AI Assistant
 
-```markdown
-# Architecture Overview
+```text
+CLI (python -m src.main) أو Streamlit (src/app.py)
+                    │
+                    ▼
+              Agent.run()
+          ┌─────────┼─────────┐
+          ▼         ▼         ▼
+      Memory      Planner   Executor
+       JSON       Gemini/    سجل أدوات
+                  fallback   آمن
+                              │
+                ┌─────────────┴─────────────┐
+                ▼             ▼             ▼
+           calculate     current_time   summarize_text
+```
 
-Below, sketch (ASCII, hand-drawn JPEG/PNG pasted in, or ASCII art) the high-level components of your agent.
+## المكونات
 
-## Components
+- **الواجهة:** CLI للمحطات والمهام السريعة، وStreamlit للمحادثة المرئية.
+- **Agent:** ينسق دورة الطلب، يستعيد الذاكرة، ينفذ الخطة، ثم يصيغ النتيجة.
+- **Planner:** يطلب خطة JSON مقيدة من Gemini عند توفر المفتاح، ويستخدم قواعد محلية عند عدم توفره.
+- **Executor:** ينفذ الأدوات الموجودة في سجل ثابت فقط؛ لا يستخدم `eval` ولا ينفذ أوامر نظام.
+- **Memory:** يحفظ آخر الرسائل في `data/memory.json` مع تحديد عدد الرسائل.
+- **Gemini adapter:** يعزل تكامل النموذج ويحوّل أخطاء الاتصال إلى fallback مفهوم.
 
-1. **User Interface**  
-   - E.g., Streamlit, CLI, Slack bot  
+## حدود الأمان
 
-2. **Agent Core**  
-   - **Planner**: how you break down tasks  
-   - **Executor**: LLM prompt + tool-calling logic  
-   - **Memory**: vector store, cache, or on-disk logs  
-
-3. **Tools / APIs**  
-   - E.g., Google Gemini API, Tools, etc
-
-4. **Observability**  
-   - Logging of each reasoning step  
-   - Error handling / retries  
-
+لا توجد أداة لتنفيذ shell أو قراءة ملفات عشوائية أو إرسال طلبات خارجية. إضافة أي أداة جديدة تتطلب تسجيلها في `tool_registry()` وإدراجها في قائمة التحقق داخل `planner.py`.
